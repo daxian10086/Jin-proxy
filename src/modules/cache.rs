@@ -253,17 +253,7 @@ fn cache_memory_set(full_key: &str, reasoning_text: &str) {
 
     }
 
-    while cache.len() > 1000 {
 
-        let first_key = cache.keys().next().cloned();
-
-        if let Some(k) = first_key {
-
-            cache.remove(&k);
-
-        }
-
-    }
 
 }
 
@@ -289,7 +279,6 @@ pub fn get_cached_reasoning(source: Source, session_id: &str) -> Vec<String> {
 
     let result = cache_file_get(source, session_id, cache_ttl);
 
-    stats::record_cache(!result.is_empty());
 
     if !result.is_empty() {
 
@@ -303,10 +292,10 @@ pub fn get_cached_reasoning(source: Source, session_id: &str) -> Vec<String> {
 
     let result = cache_memory_get(&full_key(source, session_id), cache_ttl);
 
-    stats::record_cache(!result.is_empty());
 
-    result
-
+    let final_result = result;
+    stats::record_cache(!final_result.is_empty());
+    final_result
 }
 
 

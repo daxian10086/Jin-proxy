@@ -122,6 +122,9 @@ async fn handle_connect(mut stream: TcpStream, _peer: std::net::SocketAddr, prox
     match acceptor.accept(stream).await {
         Ok(mut tls_stream) => {
             let backend_addr = format!("127.0.0.1:{}", proxy_port);
+            if let Some(data) = remaining {
+                let _ = tls_stream.write_all(data).await;
+            }
             match TcpStream::connect(&backend_addr).await {
                 Ok(mut backend) => {
                     let (mut brx, mut bwx) = tokio::io::split(backend);

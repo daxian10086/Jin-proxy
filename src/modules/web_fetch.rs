@@ -63,25 +63,25 @@ lazy_static! {
 
 
 fn is_private_url(url_str: &str) -> bool {
-
     if let Ok(parsed) = Url::parse(url_str) {
-
         if let Some(host) = parsed.host_str() {
-
+            // Try direct IP parse first
             if let Ok(addr) = IpAddr::from_str(host) {
-
                 return PRIVATE_NETWORKS.iter().any(|net| net.contains(&addr));
-
             }
-
-            return false; // hostname 闂?IP 闂侀潻闄勫妯侯焽閸愵喗鏅悘鐐靛亾閺夊綊鎮?
-
+            // Resolve hostname to check for private IPs
+            if let Ok(addrs) = std::net::ToSocketAddrs::to_socket_addrs(&(host, 80)) {
+                for addr in addrs {
+                    if PRIVATE_NETWORKS.iter().any(|net| net.contains(&addr.ip())) {
+                        warn!("DNS-resolved private IP for {}: {}", host, addr.ip());
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
-
     }
-
-    true // 闂佸綊鏀辩敮鐐靛垝妞嬪海鐭?hostname
-
+    true
 }
 
 

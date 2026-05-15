@@ -1,10 +1,10 @@
-﻿// Anthropic Messages API ? DeepSeek Chat Completions 閸楀繗顔呯紙鏄忕槯閵?
+﻿// ---- Anthropic to Chat ----
 
 // 鐎电懓绨?Python: jindx/claude.py
 
 
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 
 
@@ -96,7 +96,7 @@ fn get_auth_headers() -> Vec<(String, String)> {
 
 
 
-// 閳光偓閳光偓 Anthropic content 閳?Chat message 閳光偓閳光偓
+// ---- Anthropic to Chat ----
 
 
 
@@ -288,7 +288,7 @@ fn anthropic_tools_to_chat(tools: &[Value]) -> Vec<Value> {
 
 
 
-// 閳光偓閳光偓 Claude session key 閳光偓閳光偓
+// ---- Claude session key ----
 
 
 
@@ -326,7 +326,7 @@ fn claude_session_key(messages: &[Value]) -> String {
 
 
 
-// 閳光偓閳光偓 Anthropic 閳?Chat 鏉烆剚宕?閳光偓閳光偓
+// ---- Anthropic to Chat ----
 
 
 
@@ -556,11 +556,11 @@ pub fn anthropic_to_chat(request_body: &Value) -> (Value, String) {
 
 
 
-// 閳光偓閳光偓 闂団偓鐟曚礁婀?protocol 濡€虫健娑擃叀鐨熼悽銊ф畱鏉堝懎濮崙鑺ユ殶 閳光偓閳光偓
 
-// 濞夈劍鍓伴敍姘崇箹娑擃亝藟閹恒儱鍤遍弫鎵暏娴?claude 濡€虫健鐠嬪啰鏁?protocol 娑擃厾娈?ensure_assistant_reasoning
 
-// 閻㈠彉绨?Rust 濡€虫健缁崵绮洪惃鍕閸掕绱濋幋鎴滄粦閸?protocol 娑擃厼鍙曞鈧銈堢窡閸?
+
+
+
 
 pub mod bridge {
 
@@ -570,7 +570,7 @@ pub mod bridge {
 
     pub fn ensure_assistant_reasoning(messages: &mut Vec<Value>, cached: &[String]) {
 
-        // 鐠嬪啰鏁?protocol 濡€虫健娑擃厾娈戦柅鏄忕帆
+        
 
         super::_ensure_reasoning(messages, cached);
 
@@ -581,54 +581,49 @@ pub mod bridge {
 
 
 fn _ensure_reasoning(messages: &mut Vec<Value>, cached_reasoning: &[String]) {
-
     if cached_reasoning.is_empty() {
-
         return;
-
     }
-
     let mut cache_idx = 0;
-
-    let mut cache_used = std::collections::HashSet::new();
-
-
+    let mut cache_used = HashSet::new();
+    let mut turn_start = 0;
 
     for i in 0..messages.len() {
-
         if messages[i].get("role").and_then(|v| v.as_str()) == Some("assistant") {
-
+            // Skip messages that already have reasoning_content
             if messages[i].get("reasoning_content").is_some() {
-
                 continue;
-
             }
-
-            while cache_idx < cached_reasoning.len() {
-
-                if !cache_used.contains(&cache_idx) {
-
-                    messages[i]["reasoning_content"] = json!(cached_reasoning[cache_idx]);
-
-                    cache_used.insert(cache_idx);
-
-                    break;
-
+            // Try to copy from a previous assistant in the same turn first
+            let mut copied = false;
+            for j in (turn_start..i).rev() {
+                if messages[j].get("role").and_then(|v| v.as_str()) == Some("assistant") {
+                    if let Some(rc) = messages[j].get("reasoning_content").and_then(|v| v.as_str()) {
+                        messages[i]["reasoning_content"] = json!(rc);
+                        copied = true;
+                        break;
+                    }
                 }
-
-                cache_idx += 1;
-
             }
-
+            if !copied {
+                while cache_idx < cached_reasoning.len() {
+                    if !cache_used.contains(&cache_idx) {
+                        messages[i]["reasoning_content"] = json!(cached_reasoning[cache_idx]);
+                        cache_used.insert(cache_idx);
+                        break;
+                    }
+                    cache_idx += 1;
+                }
+            }
+        } else if messages[i].get("role").and_then(|v| v.as_str()) != Some("tool") {
+            turn_start = i + 1;
         }
-
     }
-
 }
 
 
 
-// 閳光偓閳光偓 Chat 閳?Anthropic 閸濆秴绨?閳光偓閳光偓
+// ---- Chat to Anthropic ----
 
 
 
@@ -804,7 +799,7 @@ pub fn chat_to_anthropic(chat_response: &Value, upstream_model: &str) -> (Value,
 
 
 
-// 閳光偓閳光偓 閻劋绨?protocol 濡€虫健瀵洜鏁ら惃鍕窡閸斺晛鍤遍弫?閳光偓閳光偓
+
 
 // 鐏?_ensure_assistant_reasoning 濡椼儲甯存稉鍝勫彆瀵偓閸戣姤鏆?
 

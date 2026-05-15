@@ -502,9 +502,7 @@ async fn stream_responses_sse(body: Value) -> HttpResponse {
             error!("SSE stream error: {}", e);
 
         }
-
         decrement_active_streams();
-
     });
 
 
@@ -655,7 +653,6 @@ async fn stream_responses_sse_inner(
 
             )))).await;
 
-        decrement_active_streams();
         return Ok(());
 
         }
@@ -682,7 +679,6 @@ async fn stream_responses_sse_inner(
 
         )))).await;
 
-        decrement_active_streams();
         return Ok(());
 
     }

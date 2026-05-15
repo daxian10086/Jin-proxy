@@ -54,7 +54,7 @@ async fn main() -> std::io::Result<()> {
 
     let admin_server = HttpServer::new(|| {
         let cors = Cors::default().allow_any_origin().allow_any_method().allow_any_header();
-        App::new().wrap(cors)
+        App::new().wrap(cors).app_data(web::JsonConfig::default().limit(2 * 1024 * 1024))
             .route("/admin/health", web::get().to(admin::admin_health))
             .route("/admin", web::get().to(admin::admin_page))
             .route("/admin/config", web::get().to(admin::admin_get_config))
@@ -82,7 +82,7 @@ async fn main() -> std::io::Result<()> {
 
     let proxy_server = HttpServer::new(move || {
         let cors = Cors::default().allow_any_origin().allow_any_method().allow_any_header();
-        App::new().wrap(cors)
+        App::new().wrap(cors).app_data(web::JsonConfig::default().limit(2 * 1024 * 1024))
             .route("/v1/chat/completions", web::post().to(routes::chat_completions))
             .route("/chat/completions", web::post().to(routes::chat_completions))
             .route("/v1/responses", web::post().to(routes::responses_http))
