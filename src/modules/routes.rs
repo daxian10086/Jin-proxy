@@ -1,6 +1,6 @@
-// HTTP閵嗕讣SE �?WebSocket API 鐠侯垳鏁遍妴?
+﻿// HTTP Routes & WebSocket API endpoints
 
-// 鐎电懓绨?Python: jindx/routes.py
+// 閻庣數鎳撶花?Python: jindx/routes.py
 
 
 
@@ -38,7 +38,7 @@ use crate::modules::web_fetch;
 
 
 
-// 閳光偓閳光偓 閸忓彉闊?HTTP 鐎广垺鍩涚粩?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 闁稿繐褰夐棅?HTTP 閻庡箍鍨洪崺娑氱博?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -128,7 +128,7 @@ fn get_upstream() -> String {
 
 
 
-// 閳光偓閳光偓 Chat Completions 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 Chat Completions 闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -332,7 +332,7 @@ async fn stream_chat(body: Value, auth_headers: &[(String, String)]) -> HttpResp
 
 
 
-// 閳光偓閳光偓 Responses HTTP 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 Responses HTTP 闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -348,7 +348,7 @@ pub async fn responses_http(req: HttpRequest, body: web::Json<Value>) -> HttpRes
 
 
 
-    // 鐠哄疇绻冪粚楦跨翻閸?
+    // 閻犲搫鐤囩换鍐矚妤﹁法缈婚柛?
 
     let inp = body.get("input");
 
@@ -490,7 +490,7 @@ pub async fn responses_http(req: HttpRequest, body: web::Json<Value>) -> HttpRes
 
 
 
-// 閳光偓閳光偓 SSE 濞翠礁绱?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 SSE 婵炵繝绀佺槐?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -580,7 +580,7 @@ async fn stream_responses_sse_inner(
 
 
 
-    // 缁斿宓嗛崣鎴︹偓浣稿灥婵绨ㄦ禒?
+    // 缂佹柨顑呭畵鍡涘矗閹达腹鍋撴担绋跨仴濠殿喖顑勭花銊︾?
 
     let _ = tx.send(Ok(actix_web::web::Bytes::from(format!(
 
@@ -890,7 +890,7 @@ async fn stream_responses_sse_inner(
 
 
 
-            // 缁鳖垳袧 tool call deltas
+            // 缂侀硸鍨宠ⅶ tool call deltas
 
             if let Some(tc_deltas) = d.get("tool_calls").and_then(|v| v.as_array()) {
 
@@ -928,7 +928,7 @@ async fn stream_responses_sse_inner(
 
 
 
-    // 閸欐垿鈧焦娓剁紒鍫滅皑�?
+    // 闁告瑦鍨块埀顑跨劍濞撳墎绱掗崼婊呯殤濞?
 
     let display_text = if !content_buf.is_empty() { &content_buf } else { &reasoning_buf };
 
@@ -1118,7 +1118,7 @@ async fn stream_responses_sse_inner(
 
 
 
-// 閳光偓閳光偓 Responses Compact 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 Responses Compact 闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -1370,7 +1370,7 @@ fn format_conversation_for_compact(inp: &[Value]) -> String {
 
 
 
-// 閳光偓閳光偓 濡€崇€烽崚妤勩€?& 閸嬨儱鎮嶅Λ鈧弻?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 婵☆垪鈧磭鈧兘宕氬Δ鍕┾偓?& 闁稿鍎遍幃宥呂涢埀顒勫蓟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -1454,7 +1454,7 @@ pub async fn health() -> HttpResponse {
 
     }))
 
-}// 鏉╄棄濮為崚?routes.rs 閺堫偄鐔敍灞藉彆瀵�?HTTP 鐎广垺鍩涚粩顖欎簰娓?main.rs �?Claude handler 娴ｈ法鏁?
+}// 閺夆晞妫勬慨鐐哄礆?routes.rs 闁哄牜鍋勯悢顒勬晬鐏炶棄褰嗙€殿喒鍋?HTTP 閻庡箍鍨洪崺娑氱博椤栨瑤绨板〒?main.rs 濞?Claude handler 濞达綀娉曢弫?
 
 
 

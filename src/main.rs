@@ -30,8 +30,8 @@ async fn main() -> std::io::Result<()> {
         eprintln!("========================================================");
         eprintln!("  WARNING: DEEPSEEK_KEY not configured!");
         eprintln!("  Set it before starting:");
-        eprintln!("    $env:DEEPSEEK_KEY=""sk-your-key""");
-        eprintln!("    .\jin-proxy.exe");
+        eprintln!("    $env:DEEPSEEK_KEY=\"sk-your-key\"");
+        eprintln!(r"    .\jin-proxy.exe");
         eprintln!("========================================================");
         eprintln!();
     }
