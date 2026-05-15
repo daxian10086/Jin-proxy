@@ -663,12 +663,15 @@ terminal_resize_reflow = true
 
 
 
-pub fn write_codex_config_toml(_force: bool) {
+pub fn write_codex_config_toml(force: bool) {
     let target_dir = dirs_next().unwrap_or_else(|| PathBuf::from(".")).join(".codex");
     let _ = fs::create_dir_all(&target_dir);
     let target_file = target_dir.join("config.toml");
 
-    let home_path = dirs_next().unwrap_or_else(|| PathBuf::from(".")).to_string_lossy().replace("\\", "/");
+    if !force && target_file.exists() {
+        return;
+    }
+let home_path = dirs_next().unwrap_or_else(|| PathBuf::from(".")).to_string_lossy().replace("\\", "/");
 
     let mut projects_section = format!("[projects.\"{}\"]\ntrust_level = \"trusted\"", home_path);
     if cfg!(windows) {

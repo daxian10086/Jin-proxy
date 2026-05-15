@@ -1,4 +1,4 @@
-﻿// HTTP Routes & WebSocket API endpoints
+// HTTP Routes & WebSocket API endpoints
 
 // Corresponds to Python: jindx/routes.py
 
@@ -38,7 +38,7 @@ use crate::modules::web_fetch;
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 闁稿繐褰夐棅?HTTP 閻庡箍鍨洪崺娑氱博?闁冲厜鍋撻柍鍏夊亾
+// 閳光偓閳光偓 閸忓彉闊?HTTP 鐎广垺鍩涚粩?閳光偓閳光偓
 
 
 
@@ -335,7 +335,7 @@ pub async fn responses_http(req: HttpRequest, body: web::Json<Value>) -> HttpRes
 
 
 
-    // 閻犲搫鐤囩换鍐矚妤﹁法缈婚柛?
+    // 鐠哄疇绻冪粚楦跨翻閸?
 
     let inp = body.get("input");
 
@@ -565,7 +565,7 @@ async fn stream_responses_sse_inner(
 
 
 
-    // 缂佹柨顑呭畵鍡涘矗閹达腹鍋撴担绋跨仴濠殿喖顑勭花銊︾?
+    // 缁斿宓嗛崣鎴︹偓浣稿灥婵绨ㄦ禒?
 
     let _ = tx.send(Ok(actix_web::web::Bytes::from(format!(
 
@@ -875,7 +875,7 @@ async fn stream_responses_sse_inner(
 
 
 
-            // 缂侀硸鍨宠ⅶ tool call deltas
+            // 缁鳖垳袧 tool call deltas
 
             if let Some(tc_deltas) = d.get("tool_calls").and_then(|v| v.as_array()) {
 
@@ -1355,7 +1355,7 @@ fn format_conversation_for_compact(inp: &[Value]) -> String {
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 婵☆垪鈧磭鈧兘宕氬Δ鍕┾偓?& 闁稿鍎遍幃宥呂涢埀顒勫蓟?闁冲厜鍋撻柍鍏夊亾
+// 閳光偓閳光偓 濡€崇€烽崚妤勩€?& 閸嬨儱鎮嶅Λ鈧弻?閳光偓閳光偓
 
 
 

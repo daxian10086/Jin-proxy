@@ -1,6 +1,5 @@
-// Codex CLI 适配：RPC 模拟、模型目录、分析桩。
-
-// 对应 Python: jindx/codex.py
+﻿// Codex CLI 閫傞厤锛歊PC 妯℃嫙銆佹ā鍨嬬洰褰曘€佸垎鏋愭々銆?
+// 瀵瑰簲 Python: jindx/codex.py
 
 
 
@@ -16,7 +15,7 @@ use crate::modules::config::CONFIG;
 
 
 
-// ── Codex RPC 处理 ──
+// 鈹€鈹€ Codex RPC 澶勭悊 鈹€鈹€
 
 
 
@@ -24,7 +23,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
     match method {
 
-        // 速率限制
+        // 閫熺巼闄愬埗
 
         "account/rateLimits/read" => Some(json!({
 
@@ -40,7 +39,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         })),
 
-        // 配置要求
+        // 閰嶇疆瑕佹眰
 
         "config/requirements/read" => Some(json!({
 
@@ -50,8 +49,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         })),
 
-        // 模型提供商能力
-
+        // 妯″瀷鎻愪緵鍟嗚兘鍔?
         "modelProvider/capabilities/read" => Some(json!({
 
             "method": "modelProvider/capabilities/updated",
@@ -84,8 +82,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         })),
 
-        // 实验性功能
-
+        // 瀹為獙鎬у姛鑳?
         "experimentalFeatures/list" => Some(json!({
 
             "method": "experimentalFeatures/updated",
@@ -94,7 +91,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         })),
 
-        // 账户读取
+        // 璐︽埛璇诲彇
 
         "account/read" => Some(json!({
 
@@ -120,7 +117,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         })),
 
-        // 模型列表
+        // 妯″瀷鍒楄〃
 
         "model/list" => {
 
@@ -158,7 +155,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         }
 
-        // 账户登录
+        // 璐︽埛鐧诲綍
 
         m if m.starts_with("account/login") => Some(json!({
 
@@ -168,12 +165,11 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
         })),
 
-        // 账户已更新 — 忽略
+        // 璐︽埛宸叉洿鏂?鈥?蹇界暐
 
         "account/updated" => None,
 
-        // MCP/Skills/Device — 返回空列表
-
+        // MCP/Skills/Device 鈥?杩斿洖绌哄垪琛?
         m if m.starts_with("mcpServer/") || m.starts_with("skills/") || m.starts_with("device/") =>
 
             Some(json!({"method": m.replace("read", "updated").replace("list", "updated"), "params": {}})),
@@ -192,7 +188,7 @@ pub fn handle_codex_rpc(method: &str, params: &Value) -> Option<Value> {
 
 
 
-// ── Codex 模型目录 ──
+// 鈹€鈹€ Codex 妯″瀷鐩綍 鈹€鈹€
 
 
 

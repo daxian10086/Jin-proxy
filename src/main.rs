@@ -147,7 +147,9 @@ async fn claude_messages_handler(req: HttpRequest, body: web::Json<Value>) -> Ht
         return match client.post(&upstream).json(&chat_request).headers(headers_map).send().await {
             Ok(resp) => {
                 if resp.status() != 200 {
+                    let status_code = resp.status().as_u16();
                     let body_str = resp.text().await.unwrap_or_default();
+                    modules::stats::record_error(status_code);
                     return HttpResponse::BadGateway().body(body_str);
                 }
                 let byte_stream = resp.bytes_stream();

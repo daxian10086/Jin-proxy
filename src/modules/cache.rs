@@ -1,4 +1,4 @@
-﻿// 闁规亽鍔庨幃濠勭磽閹惧磭鎽犻柨娑欑濠€浼村捶閻楀牊鐎ù鐘哄煐鐎垫梹绋婇崨顓烆嚙 + 闁告劕鎳庨悺銊╁礉閻樼儵鍋撻悢绮瑰亾?
+﻿// ...
 
 // 閻庣數鎳撶花?Python: jindx/cache.py
 
@@ -330,7 +330,7 @@ pub fn cache_reasoning(source: Source, session_id: &str, reasoning_text: &str) {
 
 
 
-    // 闁告艾鏈鐐哄礃濞嗗繐鐓傞柛鎰噹閻°劑宕濋悩鐑╁亾閻旀椿鍤㈤柛?
+    // ...
 
     cache_memory_set(&full_key(source, session_id), reasoning_text);
 
@@ -366,7 +366,7 @@ fn cleanup_expired_memory_entries() {
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 闁告艾楠歌ぐ鏉戙€掗崨顖涘€炲ù鐘侯嚙锟?闁冲厜鍋撻柍鍏夊亾
+// ...
 
 
 
