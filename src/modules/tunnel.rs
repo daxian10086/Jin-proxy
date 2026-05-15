@@ -1,4 +1,4 @@
-// TLS 证书管理和 HTTP CONNECT 隧道（简化版）。
+﻿// TLS 璇佷功绠＄悊鍜?HTTP CONNECT 闅ч亾锛堢畝鍖栫増锛夈€?
 use std::fs;
 use std::sync::Arc;
 use std::path::PathBuf;
@@ -98,8 +98,8 @@ async fn handle_connect(mut stream: TcpStream, _peer: std::net::SocketAddr, prox
     }
     // Find end of headers
     let header_end = first_line.find("\r\n\r\n").unwrap_or(first_line.len());
+    let remaining = if header_end + 4 < n { Some(&buf[header_end+4..n]) } else { None };
     let _ = stream.write_all(b"HTTP/1.1 200 Connection Established\r\n\r\n").await;
-
     // Load TLS config
     let cert_pem = fs::read_to_string(&*CERT_FILE).unwrap_or_default();
     let key_pem = fs::read_to_string(&*KEY_FILE).unwrap_or_default();

@@ -1,6 +1,6 @@
-// Anthropic Messages API ? DeepSeek Chat Completions 鍗忚缈昏瘧銆?
+﻿// Anthropic Messages API ? DeepSeek Chat Completions 閸楀繗顔呯紙鏄忕槯閵?
 
-// 瀵瑰簲 Python: jindx/claude.py
+// 鐎电懓绨?Python: jindx/claude.py
 
 
 
@@ -45,8 +45,8 @@ fn make_claude_id(prefix: &str) -> String {
 
 
 fn cfg_str(key: &str, default: &str) -> String {
-
-    CONFIG.get_claude_str(key)
+    let v = CONFIG.get_claude_str(key);
+    if v.is_empty() { default.to_string() } else { v }
 
 }
 
@@ -96,7 +96,7 @@ fn get_auth_headers() -> Vec<(String, String)> {
 
 
 
-// 鈹€鈹€ Anthropic content 鈫?Chat message 鈹€鈹€
+// 閳光偓閳光偓 Anthropic content 閳?Chat message 閳光偓閳光偓
 
 
 
@@ -288,7 +288,7 @@ fn anthropic_tools_to_chat(tools: &[Value]) -> Vec<Value> {
 
 
 
-// 鈹€鈹€ Claude session key 鈹€鈹€
+// 閳光偓閳光偓 Claude session key 閳光偓閳光偓
 
 
 
@@ -326,7 +326,7 @@ fn claude_session_key(messages: &[Value]) -> String {
 
 
 
-// 鈹€鈹€ Anthropic 鈫?Chat 杞崲 鈹€鈹€
+// 閳光偓閳光偓 Anthropic 閳?Chat 鏉烆剚宕?閳光偓閳光偓
 
 
 
@@ -556,11 +556,11 @@ pub fn anthropic_to_chat(request_body: &Value) -> (Value, String) {
 
 
 
-// 鈹€鈹€ 闇€瑕佸湪 protocol 妯″潡涓皟鐢ㄧ殑杈呭姪鍑芥暟 鈹€鈹€
+// 閳光偓閳光偓 闂団偓鐟曚礁婀?protocol 濡€虫健娑擃叀鐨熼悽銊ф畱鏉堝懎濮崙鑺ユ殶 閳光偓閳光偓
 
-// 娉ㄦ剰锛氳繖涓ˉ鎺ュ嚱鏁扮敤浜?claude 妯″潡璋冪敤 protocol 涓殑 ensure_assistant_reasoning
+// 濞夈劍鍓伴敍姘崇箹娑擃亝藟閹恒儱鍤遍弫鎵暏娴?claude 濡€虫健鐠嬪啰鏁?protocol 娑擃厾娈?ensure_assistant_reasoning
 
-// 鐢变簬 Rust 妯″潡绯荤粺鐨勯檺鍒讹紝鎴戜滑鍦?protocol 涓叕寮€姝よ緟鍔?
+// 閻㈠彉绨?Rust 濡€虫健缁崵绮洪惃鍕閸掕绱濋幋鎴滄粦閸?protocol 娑擃厼鍙曞鈧銈堢窡閸?
 
 pub mod bridge {
 
@@ -570,7 +570,7 @@ pub mod bridge {
 
     pub fn ensure_assistant_reasoning(messages: &mut Vec<Value>, cached: &[String]) {
 
-        // 璋冪敤 protocol 妯″潡涓殑閫昏緫
+        // 鐠嬪啰鏁?protocol 濡€虫健娑擃厾娈戦柅鏄忕帆
 
         super::_ensure_reasoning(messages, cached);
 
@@ -628,7 +628,7 @@ fn _ensure_reasoning(messages: &mut Vec<Value>, cached_reasoning: &[String]) {
 
 
 
-// 鈹€鈹€ Chat 鈫?Anthropic 鍝嶅簲 鈹€鈹€
+// 閳光偓閳光偓 Chat 閳?Anthropic 閸濆秴绨?閳光偓閳光偓
 
 
 
@@ -804,9 +804,9 @@ pub fn chat_to_anthropic(chat_response: &Value, upstream_model: &str) -> (Value,
 
 
 
-// 鈹€鈹€ 鐢ㄤ簬 protocol 妯″潡寮曠敤鐨勮緟鍔╁嚱鏁?鈹€鈹€
+// 閳光偓閳光偓 閻劋绨?protocol 濡€虫健瀵洜鏁ら惃鍕窡閸斺晛鍤遍弫?閳光偓閳光偓
 
-// 灏?_ensure_assistant_reasoning 妗ユ帴涓哄叕寮€鍑芥暟
+// 鐏?_ensure_assistant_reasoning 濡椼儲甯存稉鍝勫彆瀵偓閸戣姤鏆?
 
 pub fn ensure_assistant_reasoning_for_protocol(messages: &mut Vec<Value>, cached: &[String]) {
 
@@ -814,4 +814,4 @@ pub fn ensure_assistant_reasoning_for_protocol(messages: &mut Vec<Value>, cached
 
 }
 
-// 鍏紑缁?main.rs 浣跨敤鐨勮緟鍔╁嚱鏁?
+// 閸忣剙绱戠紒?main.rs 娴ｈ法鏁ら惃鍕窡閸斺晛鍤遍弫?

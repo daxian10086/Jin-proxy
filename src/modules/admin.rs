@@ -1,5 +1,4 @@
-// 管理 API 和 Web 管理面板。
-// 对应 Python: jindx/admin.py
+﻿// 绠＄悊 API 鍜?Web 绠＄悊闈㈡澘銆?// 瀵瑰簲 Python: jindx/admin.py
 
 use actix_web::{web, HttpRequest, HttpResponse};
 use serde_json::{json, Value};
@@ -8,7 +7,7 @@ use crate::modules::cache;
 use crate::modules::config::{self, CONFIG, PROXY_PORT, ADMIN_PORT, TLS_PORT, CONNECT_PORT};
 use crate::modules::stats;
 
-// -- Admin 认证 --
+// -- Admin 璁よ瘉 --
 
 fn get_admin_token() -> String {
     let key = CONFIG.get_claude_str("deepseek_key");
@@ -33,7 +32,7 @@ fn check_auth(req: &HttpRequest) -> bool {
     auth == format!("Bearer {}", token)
 }
 
-// -- 管理 API 端点 --
+// -- 绠＄悊 API 绔偣 --
 
 pub async fn admin_health(req: HttpRequest) -> HttpResponse {
     let client = reqwest::Client::new();
@@ -53,7 +52,7 @@ pub async fn admin_health(req: HttpRequest) -> HttpResponse {
     HttpResponse::Ok().json(json!({
         "status": "ok",
         "deepseek": if ds_ok { "connected" } else { "unreachable" },
-        "redis": "connected",
+        "redis": if cache::is_redis_available() { "connected" } else { "disabled" },
     }))
 }
 
@@ -134,7 +133,7 @@ pub async fn admin_proxy_toggle(req: HttpRequest, body: web::Json<Value>) -> Htt
     HttpResponse::Ok().json(config::get_proxy_status())
 }
 
-// -- 内嵌管理面板 HTML (simplified) --
+// -- 鍐呭祵绠＄悊闈㈡澘 HTML (simplified) --
 
 fn get_admin_html() -> String {
     format!(r#"<!DOCTYPE html>

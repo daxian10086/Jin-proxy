@@ -121,6 +121,7 @@ async fn main() -> std::io::Result<()> {
 
 async fn claude_messages_handler(req: HttpRequest, body: web::Json<Value>) -> HttpResponse {
     let body = body.into_inner();
+    modules::stats::record_claude_request();
     let stream = body.get("stream").and_then(|v| v.as_bool()).unwrap_or(false);
     let (chat_request, session_id) = modules::claude::anthropic_to_chat(&body);
     let client = crate::modules::routes::get_http_client().await;

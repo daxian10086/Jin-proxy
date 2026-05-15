@@ -1,6 +1,6 @@
-// 閹恒劎鎮婄紓鎾崇摠閿涙碍婀伴崷鐗堟瀮娴犺埖瀵旀稊鍛 + 閸愬懎鐡ㄩ崝鐘烩偓鐔粹偓?
+﻿// 闁规亽鍔庨幃濠勭磽閹惧磭鎽犻柨娑欑濠€浼村捶閻楀牊鐎ù鐘哄煐鐎垫梹绋婇崨顓烆嚙 + 闁告劕鎳庨悺銊╁礉閻樼儵鍋撻悢绮瑰亾?
 
-// 鐎电懓绨?Python: jindx/cache.py
+// 閻庣數鎳撶花?Python: jindx/cache.py
 
 
 
@@ -36,7 +36,7 @@ pub type Source = &'static str; // "codex" or "claude"
 
 
 
-// 閳光偓閳光偓 缂傛挸鐡ㄩ弶锛勬窗 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 缂傚倹鎸搁悺銊╁级閿涘嫭锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -52,7 +52,7 @@ struct CacheEntry {
 
 
 
-// 閳光偓閳光偓 閺傚洣娆㈢紓鎾崇摠鐠侯垰绶?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 闁哄倸娲ｅ▎銏㈢磽閹惧磭鎽犻悹渚灠锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -92,7 +92,7 @@ fn now_ts() -> u64 {
 
 
 
-// 閳光偓閳光偓 閺傚洣娆㈢紓鎾崇摠鐠囪鍟?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 闁哄倸娲ｅ▎銏㈢磽閹惧磭鎽犻悹鍥嚙锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -190,7 +190,7 @@ fn cache_file_set(source: Source, session_id: &str, reasoning_text: &str, ttl: i
 
 
 
-// 閳光偓閳光偓 閸愬懎鐡ㄧ紓鎾崇摠 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 闁告劕鎳庨悺銊х磽閹惧磭锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -211,32 +211,23 @@ fn full_key(source: Source, session_id: &str) -> String {
 
 
 fn cache_memory_get(full_key: &str, ttl: i64) -> Vec<String> {
-
-    let mut cache = MEMORY_CACHE.write().unwrap();
-
-    if let Some(entries) = cache.get_mut(full_key) {
-
+    let cache = MEMORY_CACHE.read().unwrap();
+    if let Some(entries) = cache.get(full_key) {
         let now = now_ts();
-
         let ttl_u = ttl as u64;
-
-        entries.retain(|e| now - e.ts < ttl_u);
-
-        if entries.is_empty() {
-
-            cache.remove(full_key);
-
+        let valid: Vec<String> = entries
+            .iter()
+            .filter(|e| now - e.ts < ttl_u)
+            .map(|e| e.text.clone())
+            .collect();
+        if valid.is_empty() {
             return vec![];
-
         }
-
-        return entries.iter().map(|e| e.text.clone()).collect();
-
+        return valid;
     }
-
     vec![]
-
 }
+
 
 
 
@@ -278,7 +269,7 @@ fn cache_memory_set(full_key: &str, reasoning_text: &str) {
 
 
 
-// 閳光偓閳光偓 閸忣剙绱?API 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 闁稿浚鍓欑槐?API 闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -294,7 +285,7 @@ pub fn get_cached_reasoning(source: Source, session_id: &str) -> Vec<String> {
 
 
 
-    // 閺傚洣娆㈡导妯哄帥
+    // 闁哄倸娲ｅ▎銏″濡搫锟?
 
     let result = cache_file_get(source, session_id, cache_ttl);
 
@@ -308,7 +299,7 @@ pub fn get_cached_reasoning(source: Source, session_id: &str) -> Vec<String> {
 
 
 
-    // 閸愬懎鐡ㄩ崗婊冪俺
+    // 闁告劕鎳庨悺銊╁礂濠婂啰锟?
 
     let result = cache_memory_get(&full_key(source, session_id), cache_ttl);
 
@@ -340,7 +331,7 @@ pub fn cache_reasoning(source: Source, session_id: &str, reasoning_text: &str) {
 
 
 
-    // 閺傚洣娆㈤幐浣风畽閸?
+    // 闁哄倸娲ｅ▎銏ゅ箰娴ｉ鐣介柛?
 
     let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
 
@@ -350,7 +341,7 @@ pub fn cache_reasoning(source: Source, session_id: &str, reasoning_text: &str) {
 
 
 
-    // 閸氬本顒為崘娆忓煂閸愬懎鐡ㄩ崝鐘烩偓鐔活嚢閸?
+    // 闁告艾鏈鐐哄礃濞嗗繐鐓傞柛鎰噹閻°劑宕濋悩鐑╁亾閻旀椿鍤㈤柛?
 
     cache_memory_set(&full_key(source, session_id), reasoning_text);
 
@@ -386,7 +377,7 @@ fn cleanup_expired_memory_entries() {
 
 
 
-// 閳光偓閳光偓 閸氬骸褰村〒鍛倞娴犺濮?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 闁告艾楠歌ぐ鏉戙€掗崨顖涘€炲ù鐘侯嚙锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -404,7 +395,7 @@ pub async fn memory_cache_cleanup_loop() {
 
 
 
-// 閳光偓閳光偓 Redis 閻樿埖鈧焦鐓＄拠?閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 Redis 闁绘鍩栭埀顑跨劍閻擄紕锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -432,7 +423,7 @@ pub fn get_redis_session_count() -> usize {
 
 
 
-// 閳光偓閳光偓 缂傛挸鐡ㄦ径褍鐨穱鈩冧紖 閳光偓閳光偓
+// 闁冲厜鍋撻柍鍏夊亾 缂傚倹鎸搁悺銊﹀緞瑜嶉惃顒佺┍閳╁啩锟?闁冲厜鍋撻柍鍏夊亾
 
 
 
@@ -581,4 +572,4 @@ pub fn clear_cache(source: &str) -> usize {
 }
 
 
-
+

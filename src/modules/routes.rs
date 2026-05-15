@@ -1,6 +1,6 @@
 ﻿// HTTP Routes & WebSocket API endpoints
 
-// 閻庣數鎳撶花?Python: jindx/routes.py
+// Corresponds to Python: jindx/routes.py
 
 
 
@@ -44,34 +44,21 @@ use crate::modules::web_fetch;
 
 lazy_static::lazy_static! {
 
-    static ref HTTP_CLIENT: Mutex<Option<reqwest::Client>> = Mutex::new(None);
+    static ref HTTP_CLIENT: tokio::sync::OnceCell<reqwest::Client> = tokio::sync::OnceCell::const_new();
 
 }
 
 
 
+
 pub async fn get_http_client() -> reqwest::Client {
-
-    let mut guard = HTTP_CLIENT.lock().await;
-
-    if guard.is_none() {
-
-        let client = reqwest::Client::builder()
-
+    HTTP_CLIENT.get_or_init(|| async {
+        reqwest::Client::builder()
             .timeout(std::time::Duration::from_secs(300))
-
             .pool_max_idle_per_host(20)
-
             .build()
-
-            .expect("Failed to create HTTP client");
-
-        *guard = Some(client);
-
-    }
-
-    guard.as_ref().unwrap().clone()
-
+            .expect("Failed to create HTTP client")
+    }).await.clone()
 }
 
 
@@ -128,7 +115,7 @@ fn get_upstream() -> String {
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 Chat Completions 闁冲厜鍋撻柍鍏夊亾
+// ---- Chat Completions ----
 
 
 
@@ -332,7 +319,7 @@ async fn stream_chat(body: Value, auth_headers: &[(String, String)]) -> HttpResp
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 Responses HTTP 闁冲厜鍋撻柍鍏夊亾
+// ---- Responses HTTP ----
 
 
 
@@ -490,7 +477,7 @@ pub async fn responses_http(req: HttpRequest, body: web::Json<Value>) -> HttpRes
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 SSE 婵炵繝绀佺槐?闁冲厜鍋撻柍鍏夊亾
+// ---- SSE ----
 
 
 
@@ -668,7 +655,8 @@ async fn stream_responses_sse_inner(
 
             )))).await;
 
-            return Ok(());
+        decrement_active_streams();
+        return Ok(());
 
         }
 
@@ -694,6 +682,7 @@ async fn stream_responses_sse_inner(
 
         )))).await;
 
+        decrement_active_streams();
         return Ok(());
 
     }
@@ -928,7 +917,7 @@ async fn stream_responses_sse_inner(
 
 
 
-    // 闁告瑦鍨块埀顑跨劍濞撳墎绱掗崼婊呯殤濞?
+// ---- End of routes.rs ----
 
     let display_text = if !content_buf.is_empty() { &content_buf } else { &reasoning_buf };
 
@@ -1118,7 +1107,7 @@ async fn stream_responses_sse_inner(
 
 
 
-// 闁冲厜鍋撻柍鍏夊亾 Responses Compact 闁冲厜鍋撻柍鍏夊亾
+// ---- Responses Compact ----
 
 
 
@@ -1454,7 +1443,7 @@ pub async fn health() -> HttpResponse {
 
     }))
 
-}// 閺夆晞妫勬慨鐐哄礆?routes.rs 闁哄牜鍋勯悢顒勬晬鐏炶棄褰嗙€殿喒鍋?HTTP 閻庡箍鍨洪崺娑氱博椤栨瑤绨板〒?main.rs 濞?Claude handler 濞达綀娉曢弫?
+}// ---- End of routes.rs ----
 
 
 

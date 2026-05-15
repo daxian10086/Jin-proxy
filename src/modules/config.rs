@@ -1,6 +1,6 @@
-// 运行时配置管理，线程安全。
+﻿// 杩愯鏃堕厤缃鐞嗭紝绾跨▼瀹夊叏銆?
 
-// 对应 Python: jindx/config.py
+// 瀵瑰簲 Python: jindx/config.py
 
 
 
@@ -26,7 +26,7 @@ use serde_json::Value;
 
 
 
-// ── 平台默认配置路径 ──
+// 鈹€鈹€ 骞冲彴榛樿閰嶇疆璺緞 鈹€鈹€
 
 
 
@@ -102,7 +102,7 @@ fn dirs_next() -> Option<PathBuf> {
 
 
 
-// ── 环境变量默认值 ──
+// 鈹€鈹€ 鐜鍙橀噺榛樿鍊?鈹€鈹€
 
 
 
@@ -128,7 +128,7 @@ fn env_int(key: &str, default: i64) -> i64 {
 
 
 
-// ── 公开配置常量 ──
+// 鈹€鈹€ 鍏紑閰嶇疆甯搁噺 鈹€鈹€
 
 
 
@@ -160,7 +160,7 @@ lazy_static! {
 
         "TOOL_USE_ENFORCEMENT",
 
-        "You MUST use the provided tools to accomplish the user's task. Never respond with just text explaining what you would do – actually call the tools. If tools are available, use them to take real actions: run commands, read/write files, search the web. Do NOT ask the user for confirmation before using tools. Just do it.",
+        "You MUST use the provided tools to accomplish the user's task. Never respond with just text explaining what you would do 鈥?actually call the tools. If tools are available, use them to take real actions: run commands, read/write files, search the web. Do NOT ask the user for confirmation before using tools. Just do it.",
 
     );
 
@@ -170,7 +170,7 @@ lazy_static! {
 
 
 
-// ── TLS 证书路径 ──
+// 鈹€鈹€ TLS 璇佷功璺緞 鈹€鈹€
 
 
 
@@ -178,7 +178,7 @@ lazy_static! {
 
     pub static ref CERT_DIR: PathBuf = {
 
-        // 当打包为 exe 时，证书目录放在 exe 同目录下
+        // 褰撴墦鍖呬负 exe 鏃讹紝璇佷功鐩綍鏀惧湪 exe 鍚岀洰褰曚笅
 
         if let Ok(exe) = std::env::current_exe() {
 
@@ -194,7 +194,7 @@ lazy_static! {
 
         }
 
-        // 否则从项目根目录的 certs/ 读取
+        // 鍚﹀垯浠庨」鐩牴鐩綍鐨?certs/ 璇诲彇
 
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("certs")
 
@@ -208,7 +208,7 @@ lazy_static! {
 
 
 
-// ── 默认配置 ──
+// 鈹€鈹€ 榛樿閰嶇疆 鈹€鈹€
 
 
 
@@ -278,7 +278,7 @@ fn default_config_map() -> HashMap<String, Value> {
 
 
 
-// ── RuntimeConfig ──
+// ---- RuntimeConfig ----
 
 
 
@@ -600,7 +600,7 @@ impl RuntimeConfig {
 
 
 
-// ── 全局单例 ──
+// 鈹€鈹€ 鍏ㄥ眬鍗曚緥 鈹€鈹€
 
 
 
@@ -612,13 +612,13 @@ lazy_static! {
 
 
 
-// ── Codex 配置自动生成 ──
+// 鈹€鈹€ Codex 閰嶇疆鑷姩鐢熸垚 鈹€鈹€
 
 
 
-const CODEX_CONFIG_TOML: &str = r#"# 此文件由 JinDx Proxy 启动时自动生成，请勿手动编辑。
+const CODEX_CONFIG_TOML: &str = r#"# 姝ゆ枃浠剁敱 JinDx Proxy 鍚姩鏃惰嚜鍔ㄧ敓鎴愶紝璇峰嬁鎵嬪姩缂栬緫銆?
 
-# 如需修改模型或参数，请通过管理面板 http://127.0.0.1:{admin_port} 操作。
+# 濡傞渶淇敼妯″瀷鎴栧弬鏁帮紝璇烽€氳繃绠＄悊闈㈡澘 http://127.0.0.1:{admin_port} 鎿嶄綔銆?
 
 
 
@@ -662,72 +662,31 @@ terminal_resize_reflow = true
 
 
 
-pub fn write_codex_config_toml(force: bool) {
 
+pub fn write_codex_config_toml(_force: bool) {
     let target_dir = dirs_next().unwrap_or_else(|| PathBuf::from(".")).join(".codex");
-
     let _ = fs::create_dir_all(&target_dir);
-
     let target_file = target_dir.join("config.toml");
 
-
-
-    if !force && target_file.exists() {
-
-        debug!("Codex config already exists, skip writing: {:?}", target_file);
-
-        return;
-
-    }
-
-
-
-    let home_path = dirs_next()
-
-        .unwrap_or_else(|| PathBuf::from("."))
-
-        .to_string_lossy()
-
-        .replace("\\", "/");
-
-
+    let home_path = dirs_next().unwrap_or_else(|| PathBuf::from(".")).to_string_lossy().replace("\\", "/");
 
     let mut projects_section = format!("[projects.\"{}\"]\ntrust_level = \"trusted\"", home_path);
-
     if cfg!(windows) {
-
         projects_section.push_str("\n\n[projects.\"C:/\"]\ntrust_level = \"trusted\"");
-
         projects_section.push_str("\n\n[projects.\"D:/\"]\ntrust_level = \"trusted\"");
-
     }
-
-
 
     let content = CODEX_CONFIG_TOML
-
         .replace("{admin_port}", &ADMIN_PORT.to_string())
-
         .replace("{proxy_port}", &PROXY_PORT.to_string())
-
         .replace("{projects_section}", &projects_section);
 
-
-
     if let Err(e) = fs::write(&target_file, content) {
-
         error!("Failed to write Codex config: {}", e);
-
     } else {
-
         info!("Codex config initialized at {:?}", target_file);
-
     }
-
 }
-
-
-
 pub fn clear_codex_config_toml() {
 
     let target = dirs_next()
@@ -750,7 +709,7 @@ pub fn clear_codex_config_toml() {
 
 
 
-// ── Claude 配置自动生成 ──
+// 鈹€鈹€ Claude 閰嶇疆鑷姩鐢熸垚 鈹€鈹€
 
 
 
@@ -852,8 +811,7 @@ fn ensure_claude_hosts_hijack() {
 
         let line = format!("{} {}", ip, domain);
 
-        if !existing.contains(&line) {
-
+        if !existing.lines().any(|l| l.trim() == line.trim()) {
             to_add.push(line);
 
             changed = true;
