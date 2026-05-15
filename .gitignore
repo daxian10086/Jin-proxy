@@ -1,0 +1,9 @@
+﻿/target/
+/certs/
+*.py
+fix_rs.py
+fix2.py
+write_main.py
+build_output.txt
+stdout*.txt
+stderr*.txt
